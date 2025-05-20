@@ -1,4 +1,15 @@
-// viewer.js
+//viewer.js
+const BACKEND = "neo4j"; // or "postgres"
+const port = 5001;
+
+const ROUTES = {
+  postgres: {
+    entity: "/api/display_entity"
+  },
+  neo4j: {
+    entity: "/api/neo4j/display_entity" 
+  }
+};
 
 window.onload = function () {
     const params = getQueryParams();
@@ -6,15 +17,15 @@ window.onload = function () {
     const id = params['id'];
 
     if (entity && id) {
-        viewEntity(entity, id);
+        viewEntity(entity, id, port, ROUTES[BACKEND].entity);
     } else {
         document.getElementById('content').innerHTML = '<p>Invalid parameters.</p>';
     }
 };
 
 
-function viewEntity(entity, id){
-    fetch("http://127.0.0.1:5001/api/display_entity", {
+function viewEntity(entity, id, port, route){
+    fetch(`http://127.0.0.1:${port}${ROUTES[BACKEND].entity}`, {
         method: 'POST',
         headers: {
             'Content-Type': 'application/json'

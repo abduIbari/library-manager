@@ -1,5 +1,27 @@
+const BACKEND = "neo4j"; // or "postgres"
+const port = 5001;
+
+const ROUTES = {
+  postgres: {
+    books: "/api/display_books",
+    borrow: "/api/borrow_book",
+    return: "/api/return_book",
+    clear: "/api/clear_borrowing_data"
+  },
+  neo4j: {
+    books: "/api/neo4j/display_books",
+    borrow: "/api/neo4j/borrow_book",
+    return: "/api/neo4j/return_book",
+    clear: "/api/neo4j/clear_borrowing_data"
+  }
+};
+
 window.onload = function () {
-        fetch("http://127.0.0.1:5001/api/display_books", {
+    loadBooks(port, ROUTES[BACKEND].books);
+};
+
+function loadBooks(port, route) {
+        fetch(`http://127.0.0.1:${port}${route}`, {
         method: 'GET',
         headers: {
             'Content-Type': 'application/json'
@@ -69,7 +91,7 @@ window.onload = function () {
         };
 
     function borrowBook(bookId, borrowerName, borrowDate) {
-        fetch("http://127.0.0.1:5001/api/borrow_book", {
+        fetch(`http://127.0.0.1:${port}${ROUTES[BACKEND].borrow}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -95,7 +117,7 @@ window.onload = function () {
     }
 
     function returnBook(bookId, returnDate) {
-        fetch("http://127.0.0.1:5001/api/return_book", {
+        fetch(`http://127.0.0.1:${port}${ROUTES[BACKEND].return}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -120,7 +142,7 @@ window.onload = function () {
     }
         
     function clearBorrowingData() {
-        fetch("http://127.0.0.1:5001/api/clear_borrowing_data", {
+        fetch(`http://127.0.0.1:${port}${ROUTES[BACKEND].clear}`, {
             method: "POST",
             headers: {
                 "Content-Type": "application/json"
@@ -148,7 +170,6 @@ document.getElementById('borrowForm').addEventListener('submit', function (event
     const bookId = document.getElementById('borrowBookId').value;
     const borrowerName = document.getElementById('borrowerName').value.trim();
     const borrowDate = document.getElementById('borrowDate').value;
-
 
     if (!bookId || !borrowerName || !borrowDate) {
         alert('Please fill in all fields.');
@@ -282,6 +303,6 @@ document.getElementById('clearDataBtn').addEventListener('click', function () {
     if (confirm('Are you sure you want to clear all borrowing data? This action cannot be undone.')) {
         clearBorrowingData()
         localStorage.removeItem('borrowingData'); // Only remove borrowing data
-        location.reload(); // Reload the page after clearing the data
-    }
+        // location.reload(); // Reload the page after clearing the data
+    }   
 });

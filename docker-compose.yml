@@ -1,11 +1,12 @@
 version: '3.8'
+
 services:
   postgres:
     container_name: container-pg
     image: postgres
     hostname: localhost
     ports:
-      - 5432:5432
+      - "5432:5432"
     environment:
       - POSTGRES_USER=admin
       - POSTGRES_PASSWORD=mysecretpassword
@@ -22,9 +23,23 @@ services:
     ports:
       - "5050:80"
     environment:
-      PGADMIN_DEFAULT_EMAIL: admin@admin.com
-      PGADMIN_DEFAULT_PASSWORD: root
+      - PGADMIN_DEFAULT_EMAIL=admin@admin.com
+      - PGADMIN_DEFAULT_PASSWORD=root
+    restart: unless-stopped
+
+  neo4j:
+    container_name: container-neo4j
+    image: neo4j:5
+    ports:
+      - "7474:7474"    # HTTP access (Neo4j Browser)
+      - "7687:7687"    # Bolt protocol
+    environment:
+      - NEO4J_AUTH=neo4j/123456789
+    volumes:
+      - neo4j-data:/data
     restart: unless-stopped
 
 volumes:
   postgres-data:
+  neo4j-data:
+
